@@ -1,16 +1,19 @@
 package server;
 
 import hearsay.listener.SocketProcessorListener;
+import hearsay.messaging.Dispatcher;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.io.DataInputStream;
 import java.io.UnsupportedEncodingException;
 
 
 /**
- * Represents a message in the hearsay system
+ * Represents a socket in the hearsay system
  * @author Subhasis Das
  *
  */
@@ -19,10 +22,13 @@ public class SocketProcessor extends hearsay.util.Loggable implements Runnable {
 	private final InputStream childStream;   
 	private final Socket clientSocket;
 	private SocketProcessorListener spListener;
-	private final Communicator comm;
-
-	public Communicator getComm() {
-		return comm;
+	private Map<Integer, Tab> tabs;
+	
+	private Integer activeTabId = null;
+	private Dispatcher messageDispatcher = null;
+	
+	public Map<Integer, Tab> getTabs() {
+		return tabs;
 	}
 
 	public SocketProcessorListener getSpListener() {
@@ -33,12 +39,13 @@ public class SocketProcessor extends hearsay.util.Loggable implements Runnable {
 		this.spListener = spListener;
 	}
 
-	public SocketProcessor(Socket cSocket, Communicator communicator) throws IOException {
+	public SocketProcessor(Dispatcher messageDispatcher, Socket cSocket) throws IOException {
 		clientSocket = cSocket;        
 		SetLinePrefix("Socket#"+getId()+">");
 		SetLogLevel(0);
-		comm = communicator;
-
+		this.messageDispatcher = messageDispatcher;
+		tabs = new HashMap<Integer, Tab>();
+		activeTabId = null;
 		log(1, "started");
 		childStream = clientSocket.getInputStream();
 		clientSocket.setTcpNoDelay(true);	
@@ -46,6 +53,38 @@ public class SocketProcessor extends hearsay.util.Loggable implements Runnable {
 
 	public int getId(){
 		return clientSocket.getPort();
+	}
+	
+	public Tab createNewTab(Integer tabId) throws Exception
+	{
+		if(getTab(tabId) != null)
+		{
+			throw new Exception("A tab already exists with this tab identifier");
+		}
+		else
+		{
+			Tab newTab = new Tab(tabId, null);
+			this.tabs.put(tabId, newTab);
+			return newTab;
+		}
+	}
+	
+	public Tab getTab(Integer tabId)
+	{
+		if(tabs.containsKey(tabId))
+		{
+			return tabs.get(tabId);
+		}
+		return null;
+	}
+	
+	public Integer getActiveTabId() {
+		return activeTabId;
+	}
+
+
+	public void setActiveTabId(Integer activeTabId) {
+		this.activeTabId = activeTabId;
 	}
 	
 	/**

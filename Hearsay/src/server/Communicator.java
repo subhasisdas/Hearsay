@@ -25,48 +25,7 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 	private Thread threadClient= null;
 	private final int port;
 	private CommunicationListener listener;
-	private Map<Integer, Tab> tabs;
-	
-	public Map<Integer, Tab> getTabs() {
-		return tabs;
-	}
-
-	private Integer activeTabId = null;
-	private Dispatcher messageDispatcher = null;
-	
-	
-	public Tab createNewTab(Integer tabId) throws Exception
-	{
-		if(getTab(tabId) != null)
-		{
-			throw new Exception("A tab already exists with this tab identifier");
-		}
-		else
-		{
-			Tab newTab = new Tab(tabId, null);
-			this.tabs.put(tabId, newTab);
-			return newTab;
-		}
-	}
-	
-	public Tab getTab(Integer tabId)
-	{
-		if(tabs.containsKey(tabId))
-		{
-			return tabs.get(tabId);
-		}
-		return null;
-	}
-	
-	public Integer getActiveTabId() {
-		return activeTabId;
-	}
-
-
-	public void setActiveTabId(Integer activeTabId) {
-		this.activeTabId = activeTabId;
-	}
-
+	private final Dispatcher dispatcher;
 
 	/**
 	 * New browser listeners can register using this call to be notified on events
@@ -91,12 +50,10 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 	}
 
 	//Constructor
-	public Communicator(Dispatcher messageDispatcher, int COMMUNICATOR_PORT) 
+	public Communicator(Dispatcher dispatcher, int COMMUNICATOR_PORT) 
 	{
+		this.dispatcher = dispatcher;
 		port = COMMUNICATOR_PORT;
-		this.messageDispatcher = messageDispatcher;
-		tabs = new HashMap<Integer, Tab>();
-		activeTabId = null;
 	}
 
 	/**
@@ -122,7 +79,7 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 
 				log(1,this.getClass().getSimpleName()+"accepted");
 
-				final SocketProcessor browserConnect = new SocketProcessor(clientSocket, this);
+				final SocketProcessor browserConnect = new SocketProcessor(dispatcher, clientSocket);
 
 				//Communication Listener
 				listener.onConnect(this, browserConnect);

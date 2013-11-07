@@ -47,10 +47,6 @@ public class Hearsay_Main  {
 				{
 					throw new Exception("The message is not valid");
 				}
-				if(sp.getComm().getActiveTabId() == null)
-				{
-					sp.getComm().setActiveTabId(parsedMessage.getTabId());
-				}
 				DISPATCHER_INSTANCE.processMessage(sp, parsedMessage);
 				System.out.println(sp.getId()+"[Parsed Message]:"+parsedMessage.getType()+parsedMessage.getArguments()+parsedMessage.getTabId());
 			} catch (Exception e) {

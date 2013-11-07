@@ -22,17 +22,20 @@ public class Dispatcher
 	{
 		//Create Tab if does not exist, else fetch existing tab
 		Integer tabId = message.getTabId();
-		Communicator comm = sp.getComm();
-		Tab tab = comm.getTab(tabId);
+		Tab tab = sp.getTab(tabId);
 		if(tab == null)
 		{
-			tab = comm.createNewTab(tabId);
+			tab = sp.createNewTab(tabId);
+			if(sp.getActiveTabId() == null)
+			{
+				sp.setActiveTabId(tabId);
+			}
 		}
 		synchronized(tab)
 		{
 			for(MessageHandler messageHandler : messageHandlers)
 			{
-				if(messageHandler.handleMessage(message, tab, comm))
+				if(messageHandler.handleMessage(message, tab, sp))
 				{
 					return;
 				}
