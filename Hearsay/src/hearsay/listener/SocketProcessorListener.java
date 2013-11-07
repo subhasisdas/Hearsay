@@ -2,6 +2,7 @@ package hearsay.listener;
 
 //import server.Message;
 
+import server.Communicator;
 import server.SocketProcessor;
 
 /**
@@ -14,4 +15,5 @@ public interface SocketProcessorListener {
 
 	void onDisconnect(SocketProcessor sp);
 	void onReceive(SocketProcessor sp, String message);
+	
 }

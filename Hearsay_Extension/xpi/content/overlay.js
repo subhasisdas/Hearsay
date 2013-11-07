@@ -2,7 +2,7 @@ function log(msg) {
 	consoleService.logStringMessage(msg);
 }
 
-var Helloworld = 
+var Hearsay_Extension = 
 {
 		onConnect: function() 
 		{
@@ -46,6 +46,6 @@ var Helloworld =
 		}
 };
 
-log("Helloworld is loaded");
+log("Hearsay_Extension is loaded");
 
-//window.onload=function()("load", function(e) { Helloworld.onConnect(); }, false); 
+//window.onload=function()("load", function(e) { Hearsay_Extension.onConnect(); }, false); 

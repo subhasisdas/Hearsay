@@ -1,7 +1,7 @@
 <?xml version="1.0"?> 
-<?xml-stylesheet href="chrome://helloworld/skin/overlay.css" type="text/css"?> 
-<!DOCTYPE overlay SYSTEM "chrome://helloworld/locale/overlay.dtd"> 
-<overlay id="helloworld-overlay" 
+<?xml-stylesheet href="chrome://Hearsay_Extension/skin/overlay.css" type="text/css"?> 
+<!DOCTYPE overlay SYSTEM "chrome://Hearsay_Extension/locale/overlay.dtd"> 
+<overlay id="Hearsay_Extension-overlay" 
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"> 
  
   <script src="message.js"/> 
@@ -9,8 +9,8 @@
   <script src="overlay.js"/> 
 
   <menupopup id="menu_ToolsPopup">
-   <menuitem label="Connect..." oncommand="Helloworld.onConnect()"/>
-    <menuitem label="Disconnect..." oncommand="Helloworld.onDisconnect()"/>
-    <menuitem label="Send..." oncommand="Helloworld.onSend();"/> 
+   <menuitem label="Connect..." oncommand="Hearsay_Extension.onConnect()"/>
+    <menuitem label="Disconnect..." oncommand="Hearsay_Extension.onDisconnect()"/>
+    <menuitem label="Send..." oncommand="Hearsay_Extension.onSend();"/> 
   </menupopup> 
 </overlay> 

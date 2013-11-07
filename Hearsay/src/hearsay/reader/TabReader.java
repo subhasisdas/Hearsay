@@ -3,7 +3,7 @@ package hearsay.reader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import hearsay.browserstate.Tab;
+import server.Tab;
 
 /**
  * Responsible for reading a given tab

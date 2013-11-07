@@ -1,5 +1,5 @@
 #!/bin/bash
-xpifile=helloworld.xpi
+xpifile=hearsayXtalk.xpi
 rm "$xpifile"
 cd xpi
 zip -r "$xpifile" *

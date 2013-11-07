@@ -20,7 +20,7 @@ function log(msg) {
 
 
 const hstHost = "localhost"; 		// HearSay host,                            vartype: string
-const hstPort = 12335;       		// HearSay host's port,                     vartype: integer
+const hstPort = 12330;       		// HearSay host's port,                     vartype: integer
 const hstConnectTimeout = 5000;		// connect timeout in milliseconds
 const hstReconnectInterval = 2000;	// if connect failed, trying reconnect with this interval
 

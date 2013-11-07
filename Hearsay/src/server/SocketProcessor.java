@@ -19,6 +19,11 @@ public class SocketProcessor extends hearsay.util.Loggable implements Runnable {
 	private final InputStream childStream;   
 	private final Socket clientSocket;
 	private SocketProcessorListener spListener;
+	private final Communicator comm;
+
+	public Communicator getComm() {
+		return comm;
+	}
 
 	public SocketProcessorListener getSpListener() {
 		return spListener;
@@ -28,10 +33,11 @@ public class SocketProcessor extends hearsay.util.Loggable implements Runnable {
 		this.spListener = spListener;
 	}
 
-	public SocketProcessor(Socket cSocket) throws IOException {
+	public SocketProcessor(Socket cSocket, Communicator communicator) throws IOException {
 		clientSocket = cSocket;        
 		SetLinePrefix("Socket#"+getId()+">");
 		SetLogLevel(0);
+		comm = communicator;
 
 		log(1, "started");
 		childStream = clientSocket.getInputStream();

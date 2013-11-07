@@ -1,0 +1,10 @@
+package hearsay.messagehandler;
+
+import server.Message;
+import server.Tab;
+import hearsay.browserstate.Browser;
+
+public interface MessageHandler
+{
+	public boolean handleMessage(Message message, Tab tab, Communicator comm);	
+}

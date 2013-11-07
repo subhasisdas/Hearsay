@@ -1,10 +1,13 @@
 package server;
 
 import hearsay.listener.CommunicationListener;
+import hearsay.messaging.Dispatcher;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is the basic communication class which is used to render to the incoming
@@ -22,6 +25,48 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 	private Thread threadClient= null;
 	private final int port;
 	private CommunicationListener listener;
+	private Map<Integer, Tab> tabs;
+	
+	public Map<Integer, Tab> getTabs() {
+		return tabs;
+	}
+
+	private Integer activeTabId = null;
+	private Dispatcher messageDispatcher = null;
+	
+	
+	public Tab createNewTab(Integer tabId) throws Exception
+	{
+		if(getTab(tabId) != null)
+		{
+			throw new Exception("A tab already exists with this tab identifier");
+		}
+		else
+		{
+			Tab newTab = new Tab(tabId, null);
+			this.tabs.put(tabId, newTab);
+			return newTab;
+		}
+	}
+	
+	public Tab getTab(Integer tabId)
+	{
+		if(tabs.containsKey(tabId))
+		{
+			return tabs.get(tabId);
+		}
+		return null;
+	}
+	
+	public Integer getActiveTabId() {
+		return activeTabId;
+	}
+
+
+	public void setActiveTabId(Integer activeTabId) {
+		this.activeTabId = activeTabId;
+	}
+
 
 	/**
 	 * New browser listeners can register using this call to be notified on events
@@ -46,9 +91,12 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 	}
 
 	//Constructor
-	public Communicator(int COMMUNICATOR_PORT) 
+	public Communicator(Dispatcher messageDispatcher, int COMMUNICATOR_PORT) 
 	{
 		port = COMMUNICATOR_PORT;
+		this.messageDispatcher = messageDispatcher;
+		tabs = new HashMap<Integer, Tab>();
+		activeTabId = null;
 	}
 
 	/**
@@ -74,7 +122,7 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 
 				log(1,this.getClass().getSimpleName()+"accepted");
 
-				final SocketProcessor browserConnect = new SocketProcessor(clientSocket);
+				final SocketProcessor browserConnect = new SocketProcessor(clientSocket, this);
 
 				//Communication Listener
 				listener.onConnect(this, browserConnect);
@@ -105,11 +153,12 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 	public synchronized void  start() throws Exception {
 		if (server == null) {
 			server = new ServerSocket(port);
+			log(1,"creating thread");
 			threadClient = new Thread(this);
 			threadClient.start();
 			log(1,"Communicator Socket is UP and Running!");
 		} else
-			log(0,"Communicator Socket is already Running!");
+			log(1,"Communicator Socket is already Running!");
 
 	}
 

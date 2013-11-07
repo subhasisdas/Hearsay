@@ -2,6 +2,10 @@ package server;
 
 import hearsay.listener.CommunicationListener;
 import hearsay.listener.SocketProcessorListener;
+import hearsay.messagehandler.MessageHandler;
+import hearsay.messagehandler.impl.NewDOMMessageHandler;
+import hearsay.messaging.Dispatcher;
+import hearsay.util.Loggable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,6 +20,10 @@ import java.util.Random;
  */
 public class Hearsay_Main  {
 
+	private static final Dispatcher DISPATCHER_INSTANCE = (new Dispatcher(new ArrayList<MessageHandler>() {{
+	    add(new NewDOMMessageHandler());
+	}}));
+	
 	final static List<SocketProcessor> connections = Collections.synchronizedList(new ArrayList<SocketProcessor>());
 
 	final static CommunicationListener commListener = new CommunicationListener() {
@@ -34,14 +42,23 @@ public class Hearsay_Main  {
 			// TODO Auto-generated method stub
 			System.out.println(sp.getId()+"[SocketProcessorListener] : Received :"+ message);
 			try {
-				Message parsedMsg= Message.fromString(message);
-				System.out.println(sp.getId()+"[Parsed Message]:"+parsedMsg.getType()+parsedMsg.getArguments()+parsedMsg.getTabId());
+				Message parsedMessage = Message.fromString(message);
+				if(parsedMessage == null)
+				{
+					throw new Exception("The message is not valid");
+				}
+				if(sp.getComm().getActiveTabId() == null)
+				{
+					sp.getComm().setActiveTabId(parsedMessage.getTabId());
+				}
+				DISPATCHER_INSTANCE.processMessage(sp, parsedMessage);
+				System.out.println(sp.getId()+"[Parsed Message]:"+parsedMessage.getType()+parsedMessage.getArguments()+parsedMessage.getTabId());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				System.out.println("Invalid Message from the client");
 				e.printStackTrace();
 			}
-			
+
 		}
 
 		@Override
@@ -50,6 +67,7 @@ public class Hearsay_Main  {
 			System.out.println(sp.getId()+"[SocketProcessorListener] : Disconnected");
 			connections.remove(sp);
 		}
+
 	};
 
 
@@ -57,34 +75,37 @@ public class Hearsay_Main  {
 		// TODO Auto-generated method stub
 
 		//randomly generate port number. Connection per browser instance
-				
-		final int MIN_PORT_NUM = 49152;
-		final int MAX_PORT_NUM = 65533;
-		
+
+//				final int MIN_PORT_NUM = 49152;
+//				final int MAX_PORT_NUM = 65533;
+
+		final int MIN_PORT_NUM = 12335;
+		final int MAX_PORT_NUM = 12345;
+
+
 		int [] usedports = new int[100] ;
-		
+
 		Random r = new Random();
 		int PORT_NUM = 0;
 		PORT_NUM = r.nextInt(MAX_PORT_NUM - MIN_PORT_NUM +1) + MIN_PORT_NUM;
-		
-		//		int COMMUNICATOR_PORT = 12335;
-		
+
+//		int COMMUNICATOR_PORT = 12335;
+
 		for (int i = 0; i< usedports.length; i++)
 		{
 			if (usedports[i] == PORT_NUM)
-					PORT_NUM = r.nextInt(MAX_PORT_NUM - MIN_PORT_NUM +1) + MIN_PORT_NUM;
+				PORT_NUM = r.nextInt(MAX_PORT_NUM - MIN_PORT_NUM +1) + MIN_PORT_NUM;
 		}
-		
-		System.out.println("Port number used :" + PORT_NUM);
-		
-		Communicator comm = new Communicator(PORT_NUM);
+
+		System.out.println("Port number used :" + MIN_PORT_NUM);
+
+		Communicator comm = new Communicator(DISPATCHER_INSTANCE, MIN_PORT_NUM);
 		comm.setListener(commListener);
 		//comm.run();
-	 
+		System.out.println("Comm.start");
+		
 		comm.start();
-		
-		
-		
+
 		/*XML Parser implementation:*/
 		Message myMessage = new Message(MessageType.NEW_DOM, 4);
 		myMessage.getArguments().put("param1", new ArrayList<String>());
@@ -92,31 +113,26 @@ public class Hearsay_Main  {
 		myMessage.getArguments().put("param3", new ArrayList<String>());
 		(myMessage.getArguments().get("param1")).add("value1");
 		(myMessage.getArguments().get("param2")).add("value2");
-		
-//		System.out.println(hearsayXMLMessage);
-//		System.out.println("The string is : " + hearsayXMLMessage);
-//		Message newMessage = Message.parseString(hearsayXMLMessage);
-//		System.out.println("Results are : " + newMessage.getTabId() + " " + newMessage.getType() + " " + newMessage.getArguments());
-		/*end*/
-		
+
+
 		final BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 		for(;;)
 		{
-						
+
 			String s = bufferRead.readLine();
 			(myMessage.getArguments().get("param3")).add(s);
 			String hearsayXMLMessage = myMessage.convertToString();
 			if(s.isEmpty())
 				break;
-			
-//			System.out.println("Sending: "+hearsayXMLMessage);
+
+			//			System.out.println("Sending: "+hearsayXMLMessage);
 			for(SocketProcessor sp: connections)
-				{
+			{
 				sp.send(hearsayXMLMessage);
-//				sp.send(s);
-				}
+				//				sp.send(s);
+			}
 			System.out.println("Sent!");
-			
+
 		}
 		comm.stop();
 		System.out.println("Zed is dead");
