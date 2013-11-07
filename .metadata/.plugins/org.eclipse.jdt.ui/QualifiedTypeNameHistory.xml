@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="hearsay.util.Loggable"/>
+<fullyQualifiedTypeName name="hearsay.messagehandler.MessageHandler"/>
+<fullyQualifiedTypeName name="hearsay.messaging.Dispatcher"/>
+<fullyQualifiedTypeName name="hearsay.messagehandler.impl.NewDOMMessageHandler"/>
+<fullyQualifiedTypeName name="hearsay.listener.CommunicationListener"/>
+<fullyQualifiedTypeName name="server.Communicator"/>
+<fullyQualifiedTypeName name="server.SocketProcessor"/>
 </qualifiedTypeNameHistroy>
