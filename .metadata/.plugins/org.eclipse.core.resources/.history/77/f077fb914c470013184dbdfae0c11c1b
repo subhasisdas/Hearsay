@@ -7,6 +7,7 @@ import hearsay.browserstate.Tab;
 
 /**
  * Responsible for reading a given tab
+ * @author Manoj Chandwani
  *
  */
 public class TabReader implements Runnable

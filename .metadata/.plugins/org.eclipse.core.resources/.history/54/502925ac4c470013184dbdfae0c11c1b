@@ -9,11 +9,17 @@ import java.io.DataInputStream;
 import java.io.UnsupportedEncodingException;
 
 
-/**
- * Represents a message in the hearsay system
- * @author Subhasis Das
- *
+/*
+interface spListener
+{
+	void onDisconnect(SocketProcessor);
+	void onReceive(SocketProcessor sp, String s);
+}
+*/
+/*
+ * @author - Subhasis Das
  */
+
 public class SocketProcessor extends hearsay.util.Loggable implements Runnable {
 
 	private final InputStream childStream;   
