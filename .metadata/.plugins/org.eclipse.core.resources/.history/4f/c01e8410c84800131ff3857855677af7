@@ -76,7 +76,7 @@ public class Communicator  extends hearsay.util.Loggable implements Runnable
 				log(1,this.getClass().getSimpleName()+" : accepting");
 
 				Socket clientSocket = server.accept();
-				System.out.println("Accepted a connection from client at port number : " + clientSocket.getPort());
+
 				log(1,this.getClass().getSimpleName()+"accepted");
 
 				final SocketProcessor browserConnect = new SocketProcessor(dispatcher, clientSocket);
